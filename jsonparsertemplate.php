@@ -21,6 +21,7 @@ function scan_dir ($path) {
         $extension  = $path_parts['extension'];
         $filename   = $path_parts['filename'];
         if (strcmp ($extension, 'geojson') === 0 && strcmp ($filename, 'regions') !== 0) {
+            slim ($full_path);
             extract_info ($full_path);
             echo "******************************************************************************************************************<br>";
         }
@@ -38,6 +39,11 @@ function extract_info ($path) {
 
     foreach ($lines as $line) { // for every city
         $json = json_decode($line, true); // decode the json
+
+        if ($json == null || empty ($json))
+            continue;
+        if (!array_key_exists ('name', $json) || !array_key_exists ('geometry', $json))
+           continue; 
         echo $json['name'] . "<br>";
         foreach($json['geometry']['coordinates'][0][0] as $point) { // for every point
             echo "$point[0], $point[1]<br>"; // echo the coordinates
@@ -50,6 +56,30 @@ function extract_info ($path) {
  * so that before parsing a file it can be slimmed
  */
 function slim ($path) {
+    // $json = file_get_contents ($path, FILE_USE_INCLUDE_PATH);
+    $file = fopen ($path, "a+");
+    $write_string = "";
+    if ($file)
+        while (($line = fgets ($file)) !== false) {
+            $pos = strpos ($line, '"osm_type":"way"');
+            $match = preg_match ('/^,\r\n/', $line);
+            if ($pos !== false || $match == 1 || strcmp ($line, ',') === 0 || $line[0] == ',')
+                continue;
+            $write_string .= $line;
+        }
+
+    fclose ($file);
+    file_put_contents ($path, $write_string);
+    /*
+    $lines = explode ("\n", $json);
+    for ($j = 0; $j < count($lines); ++$j) {
+        $pos = strpos ($lines[$j], '"osm_type":"way"');
+        $match = preg_match ('/^,\r\n/', $lines[$j]);
+        if ($pos !== false || $match == 1 || strcmp ($lines[$j], ',') === 0)
+            unset ($lines[$j]);
+    } 
+    $output = implode ("\n", $lines);
+    file_put_contents ($path, $output); */
 }
 
 scan_dir ('.');
