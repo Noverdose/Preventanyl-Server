@@ -52,8 +52,9 @@ function extract_info ($path) {
 }
 
 /** 
- * Future function to be implemented, essentially convert slim.php into this function 
- * so that before parsing a file it can be slimmed
+ * Function that essentially slims all the geojson files given its path
+ * Removes unnecessary data and syntax, that reduces file size and makes processing the file faster
+ * when extracting the information
  */
 function slim ($path) {
     // $json = file_get_contents ($path, FILE_USE_INCLUDE_PATH);
@@ -69,17 +70,6 @@ function slim ($path) {
         }
 
     fclose ($file);
-    file_put_contents ($path, $write_string);
-    /*
-    $lines = explode ("\n", $json);
-    for ($j = 0; $j < count($lines); ++$j) {
-        $pos = strpos ($lines[$j], '"osm_type":"way"');
-        $match = preg_match ('/^,\r\n/', $lines[$j]);
-        if ($pos !== false || $match == 1 || strcmp ($lines[$j], ',') === 0)
-            unset ($lines[$j]);
-    } 
-    $output = implode ("\n", $lines);
-    file_put_contents ($path, $output); */
 }
 
 scan_dir ('.');

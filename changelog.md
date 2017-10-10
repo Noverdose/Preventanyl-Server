@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ## [Unreleased] - 2017-10-09 Yudhvir
 ### Changed
 - Completed json parsing and slimming, it works
+### Removed
+- Fully merged slim php file into json parsing php file as function
 
 ## [Unreleased] - 2017-10-07 Yudhvir
 ### Changed
