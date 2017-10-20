@@ -1,5 +1,8 @@
 <?php
 
+// needs to allocate tons of memory or php error
+ini_set('memory_limit', "1024M");
+
 /**
  * Function that scans all directories and files from path given
  * Searches for geojson files to be parsed * To use for current directory simply pass in .
@@ -22,7 +25,7 @@ function scan_dir ($path) {
         if (strcmp ($extension, 'geojson') === 0 && strcmp ($filename, 'regions') !== 0) {
             slim ($full_path);
             extract_info ($full_path);
-            echo "******************************************************************************************************************<br>";
+ //           echo "******************************************************************************************************************<br>";
         }
     }
 }
@@ -35,8 +38,9 @@ function extract_info ($path) {
     # $lines = explode("\n", $geojson);
 
     $file = fopen ($path, "a+");
+    $locations = array();
 
-    echo "************{$path}**************<br>";
+//    echo "************{$path}**************<br>";
 
     if ($file)
         while (($line = fgets ($file)) !== false) { // for every city
@@ -46,11 +50,20 @@ function extract_info ($path) {
                 continue;
             if (!array_key_exists ('name', $json) || !array_key_exists ('geometry', $json))
                 continue; 
-            echo $json['name'] . "<br>";
+//            echo $json['name'] . "<br>";
+            $temp = array();
+            $temp['name'] = $json['name'];
+            $temp['geometry'] = array();
+                
+                
             foreach($json['geometry']['coordinates'][0][0] as $point) { // for every point
-                echo "$point[0], $point[1]<br>"; // echo the coordinates
+//                echo "$point[0], $point[1]<br>"; // echo the coordinates
+                array_push($temp['geometry'], array("lat" => $point[0], "long" => $point[1]));
             }
+            array_push($locations, $temp);
         }
+    $json = json_encode($locations);
+    echo $json;
 }
 
 /** 
