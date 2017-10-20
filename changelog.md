@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [Unreleased] - 2017-10-20 Stephen
+### Added
+- Canada.json contains parsed and formated json for canada's geocoordinates
+### Changed
+- Modified parser to output a json. use I/O redirection to save
+- 1 GB memory limit to prevent php errors
+
 ## [Unreleased] - 2017-10-09 Yudhvir
 ### Changed
 - Completed json parsing and slimming, it works
