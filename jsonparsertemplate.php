@@ -2,8 +2,7 @@
 
 /**
  * Function that scans all directories and files from path given
- * Searches for geojson files to be parsed
- * To use for current directory simply pass in .
+ * Searches for geojson files to be parsed * To use for current directory simply pass in .
  */
 function scan_dir ($path) {
     $contents = scandir ($path);
@@ -32,23 +31,26 @@ function scan_dir ($path) {
  * Function that parses the geojson files 
  */
 function extract_info ($path) {
-    $geojson = file_get_contents($path);
-    $lines = explode("\n", $geojson);
+    # $geojson = file_get_contents($path);
+    # $lines = explode("\n", $geojson);
+
+    $file = fopen ($path, "a+");
 
     echo "************{$path}**************<br>";
 
-    foreach ($lines as $line) { // for every city
-        $json = json_decode($line, true); // decode the json
+    if ($file)
+        while (($line = fgets ($file)) !== false) { // for every city
+            $json = json_decode($line, true); // decode the json
 
-        if ($json == null || empty ($json))
-            continue;
-        if (!array_key_exists ('name', $json) || !array_key_exists ('geometry', $json))
-           continue; 
-        echo $json['name'] . "<br>";
-        foreach($json['geometry']['coordinates'][0][0] as $point) { // for every point
-            echo "$point[0], $point[1]<br>"; // echo the coordinates
+            if ($json == null || empty ($json))
+                continue;
+            if (!array_key_exists ('name', $json) || !array_key_exists ('geometry', $json))
+                continue; 
+            echo $json['name'] . "<br>";
+            foreach($json['geometry']['coordinates'][0][0] as $point) { // for every point
+                echo "$point[0], $point[1]<br>"; // echo the coordinates
+            }
         }
-    }
 }
 
 /** 
@@ -64,11 +66,10 @@ function slim ($path) {
         while (($line = fgets ($file)) !== false) {
             $pos = strpos ($line, '"osm_type":"way"');
             $match = preg_match ('/^,\r\n/', $line);
-            if ($pos !== false || $match == 1 || strcmp ($line, ',') === 0 || $line[0] == ',')
+            if ($pos !== false || $match == 1 || strcmp ($line, ',') === 0)
                 continue;
             $write_string .= $line;
         }
-
     fclose ($file);
 }
 
