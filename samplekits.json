@@ -15,6 +15,97 @@
             "long": -123.1262728
         },
         "phone":6048754111,
-        "comments": "Vancouver General Hospital is a medical facility located in Vancouver, British Columbia. It is the largest facility in the Vancouver Hospital and Health Sciences Centre group of medical facilities."
+        "comments":"Vancouver General Hospital is a medical facility located in Vancouver, British Columbia. It is the largest facility in the Vancouver Hospital and Health Sciences Centre group of medical facilities."
+    },
+    "2": {  
+        "id":2,
+        "userId":"dummydata",
+        "displayName":"UBC Hospital",
+        "address":{  
+            "streetAddress":"2211 Wesbrook Mall",
+            "city":"Vancouver",
+            "provincestate":"BC",
+            "postalCode":"V6T2B5",
+            "country":"Canada"
+        },
+        "coordinates": {
+            "lat": 49.2642047,
+            "long": -123.2481961
+        },
+        "phone":6048227121,
+        "comments":"UBC Hospital is a health care facility located on the University Endowment Lands in Vancouver, British Columbia, Canada. It opened in 1968, and is now operated by Vancouver Coastal Health."
+    },
+    "3": {  
+        "id":3,
+        "userId":"dummydata",
+        "displayName":"Burnaby Hospital",
+        "address":{  
+            "streetAddress":"3935 Kincaid St",
+            "city":"Burnaby",
+            "provincestate":"BC",
+            "postalCode":"V5G2X6",
+            "country":"Canada"
+        },
+        "coordinates": {
+            "lat": 49.2497322,
+            "long": -123.0182771
+        },
+        "phone":6044344211,
+        "comments":"Burnaby Hospital, is a healthcare facility located in Burnaby, British Columbia and operated by the Fraser Health Authority. One of the largest hospitals outside the City of Vancouver, it serves the communities of Burnaby and East Vancouver."
+    },
+    "4": {  
+        "id":4,
+        "userId":"dummydata",
+        "displayName":"Royal Columbian Hospital",
+        "address":{  
+            "streetAddress":"330 E Columbia St",
+            "city":"New Westminster",
+            "provincestate":"BC",
+            "postalCode":"V3L3W7",
+            "country":"Canada"
+        },
+        "coordinates": {
+            "lat": 49.2263225,
+            "long": -122.8936457
+        },
+        "phone":6045204253,
+        "comments":"The Royal Columbian Hospital is the oldest hospital in the Canadian province of British Columbia and one of the busiest in the Fraser Health Authority."
+    },
+    "5": {  
+        "id":5,
+        "userId":"dummydata",
+        "displayName":"Mount Saint Joseph Hospital",
+        "address":{  
+            "streetAddress":"3080 Prince Edward St",
+            "city":"Vancouver",
+            "provincestate":"BC",
+            "postalCode":"V5T3N4",
+            "country":"Canada"
+        },
+        "coordinates": {
+            "lat": 49.257837,
+            "long": -123.0972221
+        },
+        "phone":6048741141,
+        "comments": "There's nothing here"
+    }
+    ,
+    "6": {  
+        "id":6,
+        "userId":"dummydata",
+        "displayName":"St. Paul's Hospital",
+        "address":{  
+            "streetAddress":"1081 Burrard St",
+            "city":"Vancouver",
+            "provincestate":"BC",
+            "postalCode":"V6Z1Y6",
+            "country":"Canada"
+        },
+        "coordinates": {
+            "lat": -123.1303759,
+            "long": 49.2805195
+        },
+        "phone":6046822344,
+        "comments": "There's nothing here"
     }
 }
