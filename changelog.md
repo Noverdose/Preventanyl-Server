@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased] - 2017-10-20 Stephen
 ### Added
+- Client side connection to firebase to populate database
+
+## [Unreleased] - 2017-10-20 Stephen
+### Added
 - Canada.json contains parsed and formated json for canada's geocoordinates
 ### Changed
 - Modified parser to output a json. use I/O redirection to save
