@@ -1,0 +1,20 @@
+{  
+    "1": {  
+        "id":1,
+        "userId":"dummydata",
+        "displayName":"Vancouver General Hospital",
+        "address":{  
+            "streetAddress":"899 W 12th Ave",
+            "city":"Vancouver",
+            "provincestate":"BC",
+            "postalCode":"V5Z1M9",
+            "country":"Canada"
+        },
+        "coordinates": {
+            "lat": 49.2620758,
+            "long": -123.1262728
+        },
+        "phone":6048754111,
+        "comments": "Vancouver General Hospital is a medical facility located in Vancouver, British Columbia. It is the largest facility in the Vancouver Hospital and Health Sciences Centre group of medical facilities."
+    }
+}
