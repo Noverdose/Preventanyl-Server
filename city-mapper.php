@@ -6,7 +6,15 @@
  * Time: 5:53 PM
  */
 
-ini_set("memory_limit", "512M");
+ini_set("memory_limit", "64M");
+//
+//set_include_path(get_include_path() . PATH_SEPARATOR . '/LINQ/Classes');
+//set_include_path(get_include_path() . PATH_SEPARATOR . '/LINQ/Classes/PhpLinq');
+//set_include_path(get_include_path() . PATH_SEPARATOR . '/LINQ/Classes/PhpLinq/Adapter');
+//
+//
+//require_once('LINQ/Classes/PHPLinq.php');
+
 
 $timeStart = floatval(microtime(true));
 
@@ -32,18 +40,18 @@ switch(strtolower(trim($mode))) {
         $myLong = $argv[3];
 
 
-        $boundingBoxes = getMapCached();
+        $boundingBoxes = getMapCached("data.json");
 //$locations = $data['locations'];
         //$keys = array_keys($boundingBoxes);
 
         //$possibleRegions = [];
 
-        $startIndex = count($boundingBoxes) - 1;
-        echo "sequential search from $startIndex to 0\n";
+        $count = count($boundingBoxes);
+        echo "sequential search from 0 to $count\n";
 
-        $matchingBoxes = sequentialSearch($boundingBoxes, $startIndex);
+        $matchingBoxes = sequentialSearch($boundingBoxes, 0);
 
-        echo "found ".count($matchingBoxes)." matching bounding boxes!\n";
+        echo "found ".count($matchingBoxes)." matching bounding boxes!\n\n";
 
         foreach($matchingBoxes AS $box) {
             getRegionPoints($box['name']);
@@ -62,13 +70,13 @@ switch(strtolower(trim($mode))) {
         $myLong = $argv[3];
 
 
-        $boundingBoxes = getMapCached();
+        $boundingBoxes = getMapCached("data.json");
 //$locations = $data['locations'];
         //$keys = array_keys($boundingBoxes);
 
         //$possibleRegions = [];
 
-        $startIndex = binarySearch($boundingBoxes, 0, count($boundingBoxes) - 1);
+        $startIndex = binarySearch($boundingBoxes, count($boundingBoxes) - 1);
 
         echo "sequential search from $startIndex to 0\n";
 
@@ -201,7 +209,7 @@ function getMap($file) {
 
     // file_put_contents("mapped.serialized", serialize($data));
 
-    saveFile($boundingBoxes);
+    saveFile($file, $boundingBoxes);
 
 
     // apc_store('map', $data);
@@ -232,7 +240,11 @@ function lat_sort($a,$b)
 //$a=array(4,2,8,6);
 //usort($a,"my_sort");
 
-function saveFile($boundingBoxes) {
+function saveFile($fileName, $boundingBoxes) {
+
+    $path_parts = pathinfo($fileName);
+    $noExtension = $path_parts['filename'];
+
 
     //$loc = $data['locations'];
 
@@ -242,12 +254,17 @@ function saveFile($boundingBoxes) {
 
     print_r($boundingBoxes);
 
-    file_put_contents("mapped.serialized", serialize($boundingBoxes));
+    file_put_contents("$noExtension.serialized", serialize($boundingBoxes));
 
 }
 
-function getMapCached() {
-    $data = unserialize(file_get_contents("mapped.serialized"));
+function getMapCached($fileName) {
+
+    $path_parts = pathinfo($fileName);
+    $noExtension = $path_parts['filename'];
+
+
+    $data = unserialize(file_get_contents("$noExtension.serialized"));
 
     //print_r($data);
 
@@ -272,7 +289,7 @@ function sequentialSearch($boundingBoxes, $startIndex) {
 
     $matching = [];
 
-    for($i=$startIndex; $i>=0; $i--) {
+    for($i=$startIndex; $i < $count; ++$i) {
 
         $location = $boundingBoxes[$i];
 
@@ -292,7 +309,7 @@ function sequentialSearch($boundingBoxes, $startIndex) {
         if( $myLat >= $regionMin['lat'] && $myLat <= $regionMax['lat']
             && $myLong >= $regionMin['long'] && $myLong <= $regionMax['long'] ) {
             $matching[] = $location;
-            echo "\nPossible region: $name @$i\n";
+            echo "Bounding Box: possible region found: $name @$i\n";
         }
 
 
@@ -312,7 +329,7 @@ function sequentialSearch($boundingBoxes, $startIndex) {
 //$locations = $data["locations"];
 
 
-function binarySearch($locations, $min, $max) {
+function binarySearch($locations, $max) {
 
     //echo "binarySearch(\$locations, $min, $max) \n";
 
@@ -320,63 +337,43 @@ function binarySearch($locations, $min, $max) {
     //global $locations;
     //global $keys;
 
-    $index = intval(floor($min + (($max - $min) / 2)));
+    // $index = intval(floor($min + (($max - $min) / 2)));
 
-    //$key = $keys[$index];
+    $low = 0;
+    $high = $max; // numElems is the size of the array i.e arr.size()
+    while ($low != $high) {
+        $mid = intval(floor(($low + $high) / 2)); // Or a fancy way to avoid int overflow
+//        var_dump ($mid);
+//        var_dump ($low);
+//        var_dump ($high);
+
+        //echo "***\n";
+
+        //echo "{$locations[$mid]['min']['lat']} < $myLat\n";
 
 
-
-    if ($myLat < $locations[$index]["min"]["lat"]) {
-        echo $locations[$index]["min"]["lat"] . PHP_EOL;
-        if ($index == $max - 1) {
-            var_dump ($myLat);
-            return -1;
+        //echo "***\n\n";
+        if ($locations[$mid]["min"]["lat"] < $myLat) {
+            /* This index, and everything below it, must not be the first element
+             * greater than what we're looking for because this element is no greater
+             * than the element.
+             */
+            $high = $mid;
         }
-        return binarySearch($locations, $index, $max);
-    } else {
-        if ($myLat > $locations[$index]["min"]["lat"] && $myLat < $locations[$index - 1]["min"]["lat"]) {
-            return $index; //$locations[$index]['name'];
+        else if ($locations[$mid]["min"]["lat"] == $myLat) {
+            return $mid;
         }
-        for (; $index > 0; --$index) {
-            if ($myLat > $locations[$index]["min"]["lat"] && $myLat < $locations[$index - 1]["min"]["lat"]) {
-                echo "\n\n FOUND {$locations[$index]['name']} @$index\n\n";
-                return $index; //$locations[$index]['name'];
-            }
+        else {
+            /* This element is at least as large as the element, so anything after it can't
+             * be the first element that's at least as large.
+             */
+            $low = $mid + 1;
         }
-
-        if ($myLat > $locations[$index]["min"]["lat"])
-            return $index;
-
-        return -1;
-        // ;
-
     }
-/*
-    foreach($locations AS $name => $location) {
 
+    return $low;
+    /* Now, low and high both point to the element in question. */
 
-        if(!isset($location['Bounding Box'])) continue;
-
-
-
-        $regionMin = $location['Bounding Box']['min'];
-
-        $regionMax = $location['Bounding Box']['max'];
-
-
-        //echo "checking $name (between $regionMin[lat]:$regionMin[long] and $regionMax[lat]:$regionMax[long] \n";
-
-
-        if( $myLat >= $regionMin['lat'] && $myLat <= $regionMax['lat']
-            && $myLong >= $regionMin['long'] && $myLong <= $regionMax['long'] ) {
-            echo "Possible region: $name\n";
-        } */
-
-
-
-//    //if($name != 'Alma') continue;
-//    echo $name . ": \n";
-//    print_r($location['Bounding Box']);
 }
 
 function getRegionPoints($name) {
@@ -435,7 +432,7 @@ function getRegionPoints($name) {
     $isInside = Raycast::isInside(['lat'=>$myLat,'long'=>$myLong], $points);
 
     if($isInside) {
-        echo "\n-----------------\nRaycast: inside $name!\n\n";
+        echo "\n-----------------\nRaycast: inside $name!\n";
     } else {
         echo "Raycast: NOT inside $name!\n";
     }
