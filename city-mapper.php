@@ -110,11 +110,14 @@ switch(strtolower(trim($mode))) {
         $matchingBoxes = MapTools::sequentialSearch($boundingBoxes, $startIndex);
 
         echo "found ".count($matchingBoxes)." matching bounding boxes!\n";
+        
+        // var_dump ($matchingBoxes);
 
         $rayCastMatches = [];
         foreach($matchingBoxes AS $box) {
             $inRegion = MapTools::isInRegion($box['name']);
-            if($inRegion) $rayCastMatches[] = $box;
+            if($inRegion) 
+            $rayCastMatches[] = $box;
         }
 
         if(empty($rayCastMatches)) {

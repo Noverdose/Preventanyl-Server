@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+## [Unreleased] - 2017-11-28 Yudhvir
+### Added
+- Added padding for bounding boxes generation -+0.005
 
 ## [Unreleased] - 2017-11-28 Yudhvir
 ### Added
