@@ -43,6 +43,10 @@ $matchingBoxes = MapTools::sequentialSearch($boundingBoxes, $startIndex);
 $rayCastMatches = [];
 foreach($matchingBoxes AS $box) {
     $inRegion = MapTools::isInRegion($box['name']);
+
+    $name = str_replace(" ","%20",$box['name']);
+    $box['url'] = $url = "https://preventanyl.firebaseio.com/locations/$name/geometry/coordinates.json";
+
     if($inRegion) $rayCastMatches[] = $box;
 }
 
@@ -60,11 +64,21 @@ if(empty($rayCastMatches)) {
     $rayCastMatches = [];
     foreach($matchingBoxes AS $box) {
         $inRegion = MapTools::isInRegion($box['name'], 'regions');
-        if($inRegion) $rayCastMatches[] = $box;
+        if($inRegion) {
+            $name = str_replace(" ","%20",$box['name']);
+            $box['url'] = $url = "https://preventanyl.firebaseio.com/regions/$name/geometry/coordinates.json";
+            $rayCastMatches[] = $box;
+        }
     }
 
     if(empty($rayCastMatches)) {
         echo "No Raycast matches... using bounding box matches\n";
+
+        foreach($matchingBoxes AS $key => $box) {
+            $name = str_replace(" ","%20",$box['name']);
+            $matchingBoxes[$key]['url'] = $url = "https://preventanyl.firebaseio.com/locations/$name/geometry/coordinates.json";
+        }
+
         $rayCastMatches = $matchingBoxes;
     }
 
@@ -79,7 +93,12 @@ foreach($users AS $user) {
 
     $place = empty($rayCastMatches[0]['name']) ? "nearby" : "in " . $rayCastMatches[0]['name'];
 
-    notify2($token,"Someone needs help", "Overdose reported $place!");
+    notify2($token,
+        "Someone needs help",
+        "Overdose reported $place!",
+        [   "latitude" => $myLat,
+            "longitude" => $myLong,
+            "region_url" => $url = $rayCastMatches[0]['url']]);
 
 }
 
@@ -124,7 +143,7 @@ function notify($tokenArray, $title, $message)
     return $result;
 }
 
-function notify2($token, $title, $body) {
+function notify2($token, $title, $body, $keyValues=[]) {
     $ch = curl_init("https://fcm.googleapis.com/fcm/send");
 
     //The device token.
@@ -137,7 +156,15 @@ function notify2($token, $title, $body) {
     //$body = "This is the body show Notification";
 
     //Creating the notification array.
-    $notification = array('title' =>$title, 'text' => $body, 'sound' => 'default', 'badge' => '10');
+    $notification = array(
+        'title' =>$title,
+        'text' => $body,
+        'sound' => 'default',
+        'badge' => '1');
+
+
+    $notification = array_merge($keyValues, $notification);
+
 
     //This array contains, the token and the notification. The 'to' attribute stores the token.
     $arrayToSend = array('to' => $token, 'notification' => $notification,'priority'=>'high');
