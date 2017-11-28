@@ -1,19 +1,23 @@
 <?php
 
+    // we don't use objects because this is parsing the JSON as received from the firebase server.
+
     class Raycast {
         public static function isInside($point, $polygon) {
+
             $polyCorners = count($polygon);
             $j = $polyCorners - 1;
             $oddNodes = false;
-            $x = $point.lat;
-            $y = $point.long;
+            $x = $point['lat'];
+            $y = $point['long'];
+
             for ($i = 0; $i < $polyCorners; ++$i) {
                 $pi = $polygon[$i];
                 $pj = $polygon[$j];
-                $polyXi = $pi.lat;
-                $polyYi = $pi.long;
-                $polyXj = $pj.lat;
-                $polyYj = $pj.long;
+                $polyXi = $pi['lat'];
+                $polyYi = $pi['long'];
+                $polyXj = $pj['lat'];
+                $polyYj = $pj['long'];
                 if (($polyYi < $y && $polyYj >= $y
                         || $polyYj < $y && $polyYi >= $y)
                         && ($polyXi <= $x || $polyXj <= $x)) {
