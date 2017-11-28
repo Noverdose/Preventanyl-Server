@@ -72,7 +72,9 @@ foreach($users AS $user) {
     $token = $user['id'];
     echo "notifying to $token\n";
 
-    notify2($token,"Someone needs help", "Overdose reported in {$rayCastMatches[0]['name']}!");
+    $place = empty($rayCastMatches[0]['name']) ? "nearby" : "in " . $rayCastMatches[0]['name'];
+
+    notify2($token,"Someone needs help", "Overdose reported $place!");
 
 }
 
