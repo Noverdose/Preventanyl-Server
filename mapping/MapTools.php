@@ -6,7 +6,7 @@
  * Time: 3:03 AM
  */
 
-define('DEBUG',false);
+define('DEBUG', true);
 
 /**
  * usort on minimim latitude
@@ -88,6 +88,12 @@ class MapTools
 
 
             }
+
+            $minLat -= 0.005;
+            $maxLat -= 0.005;
+
+            $minLong -= 0.005;
+            $maxLat  -= 0.005;
 
             $boundingBoxes[$key] = ['name' => $key,
                 'min' => ['lat' => $minLat, 'long' => $minLong],
