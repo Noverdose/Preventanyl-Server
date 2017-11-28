@@ -1,3 +1,5 @@
 *.swp
 geojson/*
+firebase-cached/locations/*
+firebase-cached/regions/*
 secret.js
