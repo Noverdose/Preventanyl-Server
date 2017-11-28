@@ -52,7 +52,7 @@ switch(strtolower(trim($mode))) {
 
         $matchingBoxes = MapTools::sequentialSearch($boundingBoxes, 0);
 
-        echo "found ".count($matchingBoxes)." matching bounding boxes!\n\n";
+        echo "\n\n" . empty($rayCastMatches[0]['name']) ? "Unknown location" : "Location in " . $rayCastMatches[0]['name'];
 
         $rayCastMatches = [];
         foreach($matchingBoxes AS $box) {
@@ -85,8 +85,16 @@ switch(strtolower(trim($mode))) {
         }
 
 
+        if(empty($rayCastMatches)) {
+            echo "No Raycast matches... using bounding box matches\n";
+            $rayCastMatches = $matchingBoxes;
+        }
+
+        echo "\n\n" . empty($rayCastMatches[0]['name']) ? "Unknown location" : "Location in " . $rayCastMatches[0]['name'];
+
+
         $time = floatval(microtime(true));
-        echo "\n\n---------------------\n";
+        echo "\n---------------------\n";
         echo "sequential search  total time elapsed: " . floor(($time - $timeStart) * 1000) . " ms" . PHP_EOL;
         exit();
 
@@ -140,9 +148,16 @@ switch(strtolower(trim($mode))) {
         }
 
 
+        if(empty($rayCastMatches)) {
+            echo "No Raycast matches... using bounding box matches\n";
+            $rayCastMatches = $matchingBoxes;
+        }
+
+        echo "\n\n" . empty($rayCastMatches[0]['name']) ? "nearby" : "in " . $rayCastMatches[0]['name'];
+
 
         $time = floatval(microtime(true));
-        echo "\n\n---------------------\n";
+        echo "\n---------------------\n";
         echo "binary search  total time elapsed: " . floor(($time - $timeStart) * 1000) . " ms" . PHP_EOL;
         exit();
 
