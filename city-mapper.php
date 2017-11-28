@@ -53,9 +53,56 @@ switch(strtolower(trim($mode))) {
 
         echo "found ".count($matchingBoxes)." matching bounding boxes!\n\n";
 
+        $rayCastMatches = [];
         foreach($matchingBoxes AS $box) {
-            getRegionPoints($box['name']);
+            $inRegion = isInRegion($box['name']);
+            if($inRegion) $rayCastMatches[] = $box;
+
         }
+
+        if(empty($rayCastMatches)) {
+            $regionBoxes = getMapCached("regions.json");
+
+            $count = count($regionBoxes);
+
+            foreach($regionBoxes AS $box) {var_dump($box);}
+
+            echo "region sequential search from 0 to $count\n";
+            $matchingBoxes = sequentialSearch($boundingBoxes, 0);
+
+            echo "found ".count($matchingBoxes)." matching region boxes!\n";
+
+            /*
+             * array(3) {
+  ["name"]=>
+  string(16) "British Columbia"
+  ["min"]=>
+  array(2) {
+    ["lat"]=>
+    float(51.8735938)
+    ["long"]=>
+    float(-133.2260288)
+  }
+  ["max"]=>
+  array(2) {
+    ["lat"]=>
+    float(54.2933915)
+    ["long"]=>
+    float(-130.8566278)
+  }
+}
+
+             */
+
+
+            $rayCastMatches = [];
+            foreach($matchingBoxes AS $box) {
+                $inRegion = isInRegion($box['name'], 'regions');
+                if($inRegion) $rayCastMatches[] = $box;
+            }
+
+        }
+
 
         $time = floatval(microtime(true));
         echo "\n\n---------------------\n";
@@ -78,15 +125,36 @@ switch(strtolower(trim($mode))) {
 
         $startIndex = binarySearch($boundingBoxes, count($boundingBoxes) - 1);
 
-        echo "sequential search from $startIndex to 0\n";
-
+        echo "(binary) sequential search from $startIndex to 0\n";
         $matchingBoxes = sequentialSearch($boundingBoxes, $startIndex);
 
         echo "found ".count($matchingBoxes)." matching bounding boxes!\n";
 
+        $rayCastMatches = [];
         foreach($matchingBoxes AS $box) {
-            getRegionPoints($box['name']);
+            $inRegion = isInRegion($box['name']);
+            if($inRegion) $rayCastMatches[] = $box;
         }
+
+        if(empty($rayCastMatches)) {
+            $regionBoxes = getMapCached("regions.json");
+
+
+            $startIndex = binarySearch($regionBoxes, count($regionBoxes) - 1);
+
+            echo "region (binary) sequential search from $startIndex to 0\n";
+            $matchingBoxes = sequentialSearch($boundingBoxes, $startIndex);
+
+            echo "found ".count($matchingBoxes)." matching region boxes!\n";
+
+            $rayCastMatches = [];
+            foreach($matchingBoxes AS $box) {
+                $inRegion = isInRegion($box['name'], 'regions');
+                if($inRegion) $rayCastMatches[] = $box;
+            }
+
+        }
+
 
 
         $time = floatval(microtime(true));
@@ -376,7 +444,7 @@ function binarySearch($locations, $max) {
 
 }
 
-function getRegionPoints($name) {
+function isInRegion($name, $controller='locations') {
 
     global $myLat, $myLong;
     require_once 'Raycast.php';
@@ -386,7 +454,7 @@ function getRegionPoints($name) {
     $name = str_replace(" ","%20",$name);
 
 
-    $coordinateFolder = "locations/{$name}/geometry";
+    $coordinateFolder = "$controller/{$name}/geometry";
     $coordinateFile = "$coordinateFolder/coordinates.json";
     $cachedFile = "./firebase-cached/$coordinateFile";
 
@@ -436,6 +504,8 @@ function getRegionPoints($name) {
     } else {
         echo "Raycast: NOT inside $name!\n";
     }
+
+    return $isInside;
 
     //$data = curl_exec($ch);
 
