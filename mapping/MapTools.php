@@ -249,26 +249,39 @@ class MapTools
         global $myLat, $myLong;
         require_once './Raycast.php';
 
+
+        $dir = "./firebase-cached/$controller";
+        if(!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
         //$name = "Vancouver";
 
-        $name = str_replace(" ","%20",$name);
+        $url_name = str_replace(" ","%20",$name);
+        $local_name = str_replace("%20", "_", $url_name);
+
+        $remoteCoordinateFolder = "https://preventanyl.firebaseio.com/$controller/{$url_name}/geometry";
+        $remoteCoordinateFile = "$remoteCoordinateFolder/coordinates.json";
 
 
-        $coordinateFolder = "$controller/{$name}/geometry";
-        $coordinateFile = "$coordinateFolder/coordinates.json";
-        $cachedFile = "./firebase-cached/$coordinateFile";
+        $cachedFolder = "./firebase-cached/$controller/{$local_name}/geometry";
+
+        $cachedFile = "$cachedFolder/coordinates.json";
+
+        //$remoteFile = "https://preventanyl.firebaseio.com/$coordinateFile";
+
+
 
         if(!file_exists($cachedFile) || filemtime($cachedFile) < strtotime('-1 days')) {
             // cache file
 
-            $url = "https://preventanyl.firebaseio.com/$coordinateFile";
 
-            if(DEBUG) echo "downloading $url\n";
+            if(DEBUG) echo "downloading $remoteCoordinateFile\n";
 //    $ch = curl_init($url);
 //    curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_URL, $remoteCoordinateFile);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 //    curl_setopt($ch, CURLOPT_POST, 1);
 //    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -277,7 +290,7 @@ class MapTools
             curl_close($ch);
 
 
-            $dir = "firebase-cached/$coordinateFolder";
+            $dir = "$cachedFolder";
 
             if(DEBUG) echo "caching to $dir";
 
