@@ -7,6 +7,8 @@
  */
 
 
+$timeStart = floatval(microtime());
+
 // to run: > php city-mapper.php <lat> <long>
 // NOTE: firebase stores them in backwards format but this script accepts in correct format. Input a lat / long from
 
@@ -35,7 +37,11 @@ foreach($data['locations'] AS $key => $location) {
     //if($key == 'Alma') echo "minMaxLat: $minLat:$maxLat, minMaxLong: $minLong:$maxLong\n";
 
 
-    foreach($location['geometry']['coordinates'] AS $coordinate) {
+    if(!isset($location['geometry']['coordinates'])) {
+        continue;
+    }
+
+    foreach(@$location['geometry']['coordinates'] AS $coordinate) {
         $lat = $coordinate['lat'];
         $long = $coordinate['long'];
 
@@ -68,10 +74,14 @@ foreach($data['locations'] AS $key => $location) {
     //print_r($data['locations'][$key]['Bounding Box']);
 }
 
+$time = floatval(microtime());
+echo "time elapsed: " . (($time - $timeStart) * 1000) . " ms" . PHP_EOL;
 
 $possibleRegions = [];
 
 foreach($data['locations'] AS $name => $location) {
+
+    if(!isset($location['Bounding Box'])) continue;
 
     $regionMin = $location['Bounding Box']['min'];
     $regionMax = $location['Bounding Box']['max'];
@@ -92,6 +102,8 @@ foreach($data['locations'] AS $name => $location) {
 //    print_r($location['Bounding Box']);
 }
 
+$time = floatval(microtime());
+echo "time elapsed: " . (($time - $timeStart) * 1000) . " ms" . PHP_EOL;
 
 
 //echo "\n\nCount: ".count($data);
