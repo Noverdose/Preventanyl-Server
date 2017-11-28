@@ -96,7 +96,8 @@ foreach($users AS $user) {
     notify2($token,
         "Someone needs help",
         "Overdose reported $place!",
-        [   "latitude" => $myLat,
+        [   "region" => $rayCastMatches[0]['name'],
+            "latitude" => $myLat,
             "longitude" => $myLong,
             "region_url" => $url = $rayCastMatches[0]['url']]);
 
