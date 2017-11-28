@@ -63,6 +63,11 @@ if(empty($rayCastMatches)) {
         if($inRegion) $rayCastMatches[] = $box;
     }
 
+    if(empty($rayCastMatches)) {
+        echo "No Raycast matches... using bounding box matches\n";
+        $rayCastMatches = $matchingBoxes;
+    }
+
 }
 
 $users = getUsers();
