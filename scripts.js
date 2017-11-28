@@ -1,8 +1,6 @@
 var file
-file = "https://raw.githubusercontent.com/Noverdose/Preventanyl-Server/develop/canada/admin_level_2.geojson"
-file = "https://raw.githubusercontent.com/Noverdose/Preventanyl-Server/develop/canada/admin_level_8.geojson"
 function getFile(fn){
-    $.get(fn, function(data) {    
+    $.get(fn, function(data) {
         var lines = data.split("\n");
 
         $.each(lines, function(n, elem) {
@@ -14,7 +12,7 @@ function getFile(fn){
                 }
             } catch (e) {}
         });
-    });    
+    });
 }
 
 function addLocation(name, coordinates) {
@@ -31,12 +29,13 @@ function addLocation(name, coordinates) {
 }
 
 function addLocationV2(name, coordinates) {
+    console.log (name);
     var c = []
     c['coordinates'] = []
     for (let i = 0; i < coordinates[0].length; i++) {
         var t = []
-        t['lat'] = coordinates[0][i][0]
-        t['long'] = coordinates[0][i][1]
+        t['lat'] = coordinates[0][i][1]
+        t['long'] = coordinates[0][i][0]
         c['coordinates'].push(t)
     }
     firebase.database().ref('/locations/' + name).set({
@@ -45,5 +44,13 @@ function addLocationV2(name, coordinates) {
     })
 }
 
+function getFiles () {
+    for (let i = 0; i <= 13; ++i) {
+        file = "https://raw.githubusercontent.com/Noverdose/Preventanyl-Server/develop/canada/admin_level_" + i + ".geojson";
+        getFile (file);
+    }
+}
+
 firebase.database().ref('/locations/').set(null)
-getFile(file)
+// getFile(file)
+getFiles();

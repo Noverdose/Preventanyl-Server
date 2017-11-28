@@ -58,7 +58,7 @@ function extract_info ($path) {
                 
             foreach($json['geometry']['coordinates'][0][0] as $point) { // for every point
 //                echo "$point[0], $point[1]<br>"; // echo the coordinates
-                array_push($temp['geometry'], array("lat" => $point[0], "long" => $point[1]));
+                array_push($temp['geometry'], array("lat" => $point[1], "long" => $point[0]));
             }
             array_push($locations, $temp);
         }
