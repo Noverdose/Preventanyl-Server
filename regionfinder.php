@@ -84,7 +84,7 @@ if(empty($rayCastMatches)) {
 
 }
 
-addOverdose($myLat, $myLong, $rayCastMatches[0]);
+updateOverdose($myLat, $myLong, $rayCastMatches[0]);
 
 
 $users = getUsers();
@@ -219,7 +219,7 @@ function getUsers() {
 
 }
 
-function addOverdose($lat, $long, $region) {
+function updateOverdose($lat, $long, $region) {
 
 
 
@@ -233,7 +233,7 @@ function addOverdose($lat, $long, $region) {
 
     //$id = "$time.$lat.$long";
 
-    $url = "https://preventanyl.firebaseio.com/overdoses/$id.json";
+    $url = "https://preventanyl.firebaseio.com/overdoses/$id/.json";
 
 
     //curl -X PUT -d '{ "first": "Jack", "last": "Sparrow" }' \
@@ -257,7 +257,8 @@ function addOverdose($lat, $long, $region) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+    //curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
     $jsonResponse = curl_exec($ch);
