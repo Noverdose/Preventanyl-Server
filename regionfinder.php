@@ -84,6 +84,9 @@ if(empty($rayCastMatches)) {
 
 }
 
+addOverdose($myLat, $myLong, $rayCastMatches[0]);
+
+
 $users = getUsers();
 
 foreach($users AS $user) {
@@ -93,6 +96,8 @@ foreach($users AS $user) {
 
     $place = empty($rayCastMatches[0]['name']) ? "nearby" : "in " . $rayCastMatches[0]['name'];
 
+
+
     notify2($token,
         "Someone needs help",
         "Overdose reported $place!",
@@ -100,6 +105,8 @@ foreach($users AS $user) {
             "latitude" => $myLat,
             "longitude" => $myLong,
             "region_url" => $url = $rayCastMatches[0]['url']]);
+
+
 
 }
 
@@ -209,6 +216,61 @@ function getUsers() {
     curl_close($ch);
 
     return json_decode($json, true);
+
+}
+
+function addOverdose($lat, $long, $region) {
+
+
+
+    //$date = date('Y-m-d');
+    //$time = time();
+
+
+    $id = @$_REQUEST['id'];
+
+    if(empty($id)) die("id not set!!");
+
+    //$id = "$time.$lat.$long";
+
+    $url = "https://preventanyl.firebaseio.com/overdoses/$id.json";
+
+
+    //curl -X PUT -d '{ "first": "Jack", "last": "Sparrow" }' \
+    //'https://[PROJECT_ID].firebaseio.com/users/jack/name.json'
+
+
+    //$data = ["date"=>$date,"timestamp"=>$time,"latitude"=>$lat,"longitude"=>$long];
+
+    $data = ["region" => $region['name']];
+
+
+    //$data = '{"time": "6"}';
+
+    $data = json_encode($data);
+
+    echo "Posting $data to $url";
+
+
+
+    //$url = "https://test.firebaseio.com/test_api/types.json";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
+    $jsonResponse = curl_exec($ch);
+    if(curl_errno($ch))
+    {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+    curl_close($ch);
+
+    echo "<br><h2>Add Overdose Response:</h2>";
+    echo "<b>URL: </b> $url<br>";
+    echo print_r(json_decode($jsonResponse));
+    echo "<br><br>";
 
 }
 
